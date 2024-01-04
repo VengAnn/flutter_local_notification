@@ -58,9 +58,24 @@ class _HomePageState extends State<HomePage> {
           ),
           TextbuttonReusable(
             color: Colors.blue,
-            text: "Test",
+            text: "Schedul Notification",
             onPressed: () {
               debugPrint("press2");
+              NotificationHelper.showScheduleNotification(
+                title: "test schedule",
+                body: "Today at 6 PM",
+                payload: "dinner_6PM",
+                scheduleDate: DateTime.now().add(
+                  const Duration(seconds: 5),
+                ),
+              );
+
+              // Show SnackBar when the Schedule Notification button is pressed
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Scheduled in 5 seconds"),
+                ),
+              );
             },
           ),
         ],

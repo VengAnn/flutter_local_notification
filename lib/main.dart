@@ -4,7 +4,7 @@ import 'package:flutter_local_notification/second_page.dart';
 import 'package:flutter_local_notification/service/notification_helper.dart';
 
 void main() {
-  //WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   // await NotificationHelper().setup();
   runApp(const MyApp());
 }
