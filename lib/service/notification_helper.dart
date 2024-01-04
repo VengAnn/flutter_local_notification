@@ -1,71 +1,56 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:rxdart/rxdart.dart';
 
 class NotificationHelper {
   //instant Notification plugin
-  final _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  static final _notifications = FlutterLocalNotificationsPlugin();
+  static final onNotifications = BehaviorSubject<String?>();
 
-  Future<void> setup() async {
-    const AndroidInitializationSettings androidInitializationSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-    const iosInitializationSettings = DarwinInitializationSettings();
+  // void onDidReceiveNotificationResponse(
+  //     NotificationResponse notificationResponse) async {
+  //   print(notificationResponse.payload);
+  // }
 
-    const InitializationSettings initializationSettings =
-        InitializationSettings(
-      android: androidInitializationSettings,
-      iOS: iosInitializationSettings,
+  static Future init({bool initSchedule = false}) async {
+    final android = AndroidInitializationSettings('@mipmap/ic_launcher');
+    final iOS = DarwinInitializationSettings();
+    final settings = InitializationSettings(android: android, iOS: iOS);
+    await _notifications.initialize(
+      settings,
+      onDidReceiveNotificationResponse: (payload) async {
+        onNotifications.add(payload.payload); // add payload to the stream
+      },
     );
-
-    await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
   //funciton show notification
-  // static Future showNotification({
-  //   int id = 0,
-  //   String? title,
-  //   String? body,
-  //   String? payload,
-  // }) async =>
-  //     _notification.show(
-  //       id,
-  //       title,
-  //       body,
-  //       await _notificationDetails(),
-  //       payload: payload,
-  //     );
-
-  Future<NotificationDetails> _notificationDetails() async {
-    const AndroidNotificationDetails androidNotificationDetails =
-        AndroidNotificationDetails(
-      '0', // channel Id
-      'general', // channel Name
-    );
-
-    //this for ios
-    // ignore: unnecessary_nullable_for_final_variable_declarations
-    const DarwinNotificationDetails iosNotificationDetails =
-        DarwinNotificationDetails();
-
-    return const NotificationDetails(
-      android: androidNotificationDetails,
-      iOS: iosNotificationDetails,
-    );
-  }
-
   static Future<void> showNotification({
-    required int id,
-    required String? title,
-    required String? body,
+    int id = 0,
+    String? title,
+    String? body,
     String? payload,
-    required NotificationHelper notificationHelper,
   }) async {
-    final notificationDetails = await notificationHelper._notificationDetails();
-
-    await notificationHelper._flutterLocalNotificationsPlugin.show(
+    await _notifications.show(
       id,
       title,
       body,
-      notificationDetails,
+      await _notificationDetails(),
       payload: payload,
+    );
+  }
+
+  static Future<NotificationDetails> _notificationDetails() async {
+    return const NotificationDetails(
+      android: AndroidNotificationDetails(
+        'channel id',
+        'channelName',
+        channelDescription: "channelDescription",
+        importance: Importance.max,
+      ),
+      iOS: DarwinNotificationDetails(),
     );
   }
 }

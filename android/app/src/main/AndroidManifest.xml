@@ -2,7 +2,8 @@
     <application
         android:label="flutter_local_notification"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:enableOnBackInvokedCallback="true"> <!-- Added enableOnBackInvokedCallback -->
         <activity
             android:name=".MainActivity"
             android:exported="true"

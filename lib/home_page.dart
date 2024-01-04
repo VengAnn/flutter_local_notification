@@ -2,8 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notification/service/notification_helper.dart';
 import 'package:flutter_local_notification/widget/textbuttton_reusable.dart';
 
-class HomePage extends StatelessWidget {
+import 'second_page.dart';
+
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+
+    NotificationHelper.init();
+    listenNotification();
+  }
+
+  void listenNotification() {
+    NotificationHelper.onNotifications.stream.listen(onClickNotification);
+  }
+
+  void onClickNotification(String? payload) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => SecondPage(payload: payload),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +48,7 @@ class HomePage extends StatelessWidget {
                 id: 0,
                 title: "Hello",
                 body: "Hey i'm notification!",
-                payload: 'test.abs',
-                notificationHelper: NotificationHelper(),
+                payload: 'test.esthabs',
               );
             },
           ),
